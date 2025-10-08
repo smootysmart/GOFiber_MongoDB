@@ -1,0 +1,7 @@
+name: "Docker Compose Deploy"
+description: "Down old containers, prune and deploy new version"
+runs:
+  using: "composite"
+  steps:
+    - run: ./entrypoint.sh
+      shell: bash
