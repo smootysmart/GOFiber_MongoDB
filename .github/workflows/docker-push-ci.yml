@@ -28,7 +28,12 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and Push Docker Image with SHA
-        run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}:${{ github.sha }}
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}:${{ github.sha }}
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          context: .
+          file: ./Dockerfile
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/gofiber-app:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/gofiber-app:${{ github.sha }}
