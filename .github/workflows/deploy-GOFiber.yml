@@ -17,8 +17,7 @@ jobs:
         run: docker ps -a
 
       - name: Pull latest Nginx image
-        run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/gofiber-app
-        tag: ${{ github.sha }}
+        run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/gofiber-app:${{ github.sha }}
 
       - name: Deploy Nginx with Docker Compose
         run: docker compose -f docker-compose.yml up -d
