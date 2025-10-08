@@ -35,10 +35,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build Docker image
-        run: |
-          docker build -t $IMAGE_NAME:$IMAGE_TAG .
-          docker image ls | grep gofiber-app
+#      - name: Build Docker image
+#        run: |
+#          docker build -t $IMAGE_NAME:$IMAGE_TAG .
+#          docker image ls | grep gofiber-app
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
