@@ -26,9 +26,8 @@ jobs:
 
       - name: Build Go binary
         run: |
-          go mod download
-          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bin/app ./cmd/app
-          ls -la bin
+          go mod tidy
+          go build -o main .
 
       - name: Docker login
         uses: docker/login-action@v3
