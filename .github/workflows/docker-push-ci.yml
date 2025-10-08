@@ -27,7 +27,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Checkout Repository (Needed for Dockerfile context/cache)
-        uses: GOFiber_MongoDB/checkout@v4
+        uses: actions/checkout@v4
 
       - name: Push Docker Image to Hub
         uses: docker/build-push-action@v5
