@@ -71,8 +71,8 @@ jobs:
 
       - name: Deploy with Docker Compose
         run: |
-          docker-compose -f docker-compose.yml down --remove-orphans || true
-          docker-compose -f docker-compose.yml up -d --remove-orphans
+          docker compose -f docker-compose.yml down --remove-orphans || true
+          docker compose -f docker-compose.yml up -d --remove-orphans
 
       - name: Cleanup unused Docker data
         run: |
