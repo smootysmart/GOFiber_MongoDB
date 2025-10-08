@@ -1,0 +1,85 @@
+name: CI-CD
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    name: Build and Push Image
+    runs-on: self-hosted
+
+    env:
+      APP_ENV: production
+      APP_PORT: 3000
+      MONGODB_URI: ${{ secrets.MONGO_URI }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.25'
+
+      - name: Build Go binary
+        run: |
+          go mod download
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bin/app ./cmd/app
+          ls -la bin
+
+      - name: Docker login
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build Docker image
+        run: |
+          docker build -t $IMAGE_NAME:$IMAGE_TAG .
+          docker image ls | grep gofiber-app
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          context: .
+          file: ./Dockerfile
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/gofiber-app:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/gofiber-app:${{ github.sha }}
+
+  deploy:
+    name: Deploy on VM
+    runs-on: self-hosted
+    needs: build-and-push
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Pull latest image
+        run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/gofiber-app:latest
+
+      - name: Stop old container if exists
+        run: |
+          running=$(docker ps -q --filter "ancestor=$IMAGE_NAME:$IMAGE_TAG")
+          if [ -n "$running" ]; then
+            docker rm -f $running || true
+          fi
+
+      - name: Deploy with Docker Compose
+        run: |
+          docker-compose -f docker-compose.yml down --remove-orphans || true
+          docker-compose -f docker-compose.yml up -d --remove-orphans
+
+      - name: Cleanup unused Docker data
+        run: |
+          docker container prune -f || true
+          docker image prune -af || true
+          docker volume prune -f || true
+
+      - name: Verify Deployment
+        run: docker ps -a
