@@ -13,17 +13,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Prune old Docker resources
-        run: |
-          docker system prune -af
-          docker image prune -f
-
-      - name: Create .env file
-        run: |
-          echo "MONGODB_URI=${{ secrets.MONGO_URI }}" > .env
-
       - name: Pull latest image
         run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/gofiber-app:latest
 
       - name: Deploy with Docker Compose
         run: docker compose -f docker-compose.yml up -d
+
+      - name: Prune old Docker resources
+        run: |
+          docker system prune -af
+          docker image prune -f
