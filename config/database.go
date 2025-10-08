@@ -3,6 +3,7 @@ package config
 import (
 	"context"
 	"log"
+	"os"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -25,10 +26,10 @@ func ConnectMongoDB() error {
 	godotenv.Load()
 
 	// Get MongoDB URI from environment variable
-	//mongoURI := os.Getenv("MONGODB_URI")
+	mongoURI := os.Getenv("MONGODB_URI")
 
 	// Set client options
-	clientOptions := options.Client().ApplyURI("mongodb://root:password@localhost:27017")
+	clientOptions := options.Client().ApplyURI(mongoURI)
 
 	// Create context with timeout
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
