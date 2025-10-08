@@ -11,8 +11,6 @@ jobs:
     runs-on: self-hosted
 
     env:
-      APP_ENV: production
-      APP_PORT: 3000
       MONGODB_URI: ${{ secrets.MONGO_URI }}
 
     steps:
@@ -71,6 +69,7 @@ jobs:
 
       - name: Deploy with Docker Compose
         run: |
+          echo "MONGODB_URI=$MONGODB_URI" >> .env
           docker compose -f docker-compose.yml down --remove-orphans || true
           docker compose -f docker-compose.yml up -d --remove-orphans
 
