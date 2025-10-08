@@ -16,7 +16,7 @@ jobs:
       - name: Prune old Docker resources
         run: |
           docker system prune -af
-          docker images prune -f
+          docker image prune -f
 
       - name: Create .env file
         run: |
