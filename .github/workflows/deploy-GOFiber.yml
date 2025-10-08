@@ -16,8 +16,9 @@ jobs:
       - name: Pull latest image
         run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/gofiber-app:latest
 
-      - name: Docker compose down
-        run: docker compose down
+      - name: "Docker Compose Deploy"
+        run: ./entrypoint.sh
+        shell: bash
 
       - name: Deploy with Docker Compose
         run: docker compose -f docker-compose.yml up -d
