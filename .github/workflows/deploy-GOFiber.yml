@@ -15,7 +15,7 @@ jobs:
 
       - name: Prune old Docker resources
         run: |
-          pwd
+          docker stop server
           docker compose down --rmi all
           docker system prune -af
 
