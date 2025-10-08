@@ -1,15 +1,6 @@
 version: "3.9"
 
 services:
-  gofiber-app:
-    image: smootysmart/gofiber-app:latest
-    container_name: gofiber-app
-    restart: always
-    ports:
-      - "8080:8080"
-    env_file:
-      - .env
-
   mongodb:
     image: mongo:latest
     container_name: mongodb
@@ -21,6 +12,17 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
+
+  gofiber:
+    depends_on:
+      - mongodb
+    image: smootysmart/gofiber-app:latest
+    container_name: gofiber-app
+    restart: always
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
 
 volumes:
   mongo_data:
